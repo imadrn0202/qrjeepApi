@@ -18,6 +18,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::post('checkMobileNumber', 'API\UserController@checkMobileNumber')->name('checkMobileNumber');
+Route::post('checkMobileNumber', 'Api\UserController@checkMobileNumber')->name('checkMobileNumber');
 
-Route::post('validateLogin', 'API\UserController@validateLogin')->name('validateLogin');
+Route::post('validateLogin', 'Api\UserController@validateLogin')->name('validateLogin');
+
+
+
+Route::group(['middleware' => 'auth:api'], function(){
+Route::post('addBalance', 'Api\UserController@addBalance')->name('addBalance');
+Route::post('checkBalance', 'Api\UserController@checkBalance')->name('checkBalance');
+});

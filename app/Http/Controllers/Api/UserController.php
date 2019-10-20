@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use Carbon\Carbon;
 use Nexmo;
+use App\TransactionLogs;
 
 class UserController extends Controller
 {
@@ -88,12 +89,13 @@ class UserController extends Controller
             ]);
         }
 
-        else {
+        else { 
 
             $token = $verifyCode->createToken('Laravel Password Grant Client')->accessToken;
             
             return response()->json([
                 'access_token' => $token,
+                'mobile_number' => $verifyCode->mobile_number,
                 'verified' => true
             ]);
 
@@ -101,5 +103,51 @@ class UserController extends Controller
 
         
     }
+
+    public function addBalance(Request $request) {
+
+        $req = $request->all();
+
+
+        $getCurrentBalance = User::where('mobile_number', $req['data']['scan_mobile_number'])->first();
+
+        $initialAmount = $req['data']['amount'];
+        $finalAmount = $getCurrentBalance->balance + $req['data']['amount'];
+        $mob = $req['data']['scan_mobile_number'];
+
+        
+
+        $user = User::where('mobile_number', $req['data']['scan_mobile_number'])->update(['balance' => $finalAmount]);
+        //$user = User::where('mobile_number', $req['scan_mobile_number'])->update(['balance' => $finalAmount]);
+
+
+
+        $flight = TransactionLogs::create(
+        [
+        'user_id' => Auth::user()->id, 
+        'scanned_mobile_number' =>  $mob,
+        'amount' => $initialAmount 
+        ]);
+
+        return response()->json([
+                'success' => true
+        ]);
+
+    }
+
+    public function checkBalance() {
+
+
+        $getCurrentBalance = User::where('mobile_number', Auth::user()->mobile_number)->first();
+
+
+        return response()->json([
+                'balance' => $getCurrentBalance->balance,
+                'success' => true
+        ]);
+
+    }
+
+        
 
 }

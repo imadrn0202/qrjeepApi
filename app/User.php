@@ -43,4 +43,12 @@ class User extends Authenticatable
         return $this->where('mobile_number', $username)->first();
     }
 
+    public function tlogs()
+
+    {
+
+        return $this->hasOne('App\Profile', 'user_id', 'id');
+
+    }
+
 }

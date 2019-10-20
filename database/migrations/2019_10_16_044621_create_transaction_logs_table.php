@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersTable extends Migration
+class CreateTransactionLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('transaction_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('mobile_number');
-            $table->integer('sms_verification_code');
-            $table->float('balance', 8, 2)->default(0);
-            $table->rememberToken()->nullable();
+            $table->bigInteger('user_id');
+            $table->bigInteger('scanned_mobile_number');
+            $table->float('amount', 8, 2);
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('transaction_logs');
     }
 }
