@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'mobile_number', 'pin', 'sms_verification_code'
+        'mobile_number', 'pin', 'sms_verification_code', 'email'
     ];
 
     /**
@@ -48,6 +48,14 @@ class User extends Authenticatable
     {
 
         return $this->hasOne('App\Profile', 'user_id', 'id');
+
+    }
+
+    public function pin()
+
+    {
+
+        return $this->hasOne('App\User', 'user_id', 'id');
 
     }
 

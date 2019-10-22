@@ -18,6 +18,8 @@ class CreateUsersTable extends Migration
             $table->bigInteger('mobile_number');
             $table->integer('sms_verification_code');
             $table->float('balance', 8, 2)->default(0);
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken()->nullable();
             $table->timestamps();
         });

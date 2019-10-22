@@ -27,4 +27,5 @@ Route::post('validateLogin', 'Api\UserController@validateLogin')->name('validate
 Route::group(['middleware' => 'auth:api'], function(){
 Route::post('addBalance', 'Api\UserController@addBalance')->name('addBalance');
 Route::post('checkBalance', 'Api\UserController@checkBalance')->name('checkBalance');
+Route::post('checkPin', 'Api\UserController@checkPin')->name('checkPin');
 });
