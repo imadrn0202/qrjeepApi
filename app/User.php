@@ -59,4 +59,12 @@ class User extends Authenticatable
 
     }
 
+    public function email_verification()
+
+    {
+
+        return $this->hasOne('App\EmailVerification', 'user_id', 'id');
+
+    }
+
 }

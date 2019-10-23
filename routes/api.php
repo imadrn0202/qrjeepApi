@@ -25,7 +25,20 @@ Route::post('validateLogin', 'Api\UserController@validateLogin')->name('validate
 
 
 Route::group(['middleware' => 'auth:api'], function(){
+//balance
 Route::post('addBalance', 'Api\UserController@addBalance')->name('addBalance');
 Route::post('checkBalance', 'Api\UserController@checkBalance')->name('checkBalance');
-Route::post('checkPin', 'Api\UserController@checkPin')->name('checkPin');
+
+//pin
+Route::post('checkPin', 'Api\PinController@checkPin')->name('checkPin');
+Route::post('updatePin', 'Api\PinController@updatePin')->name('updatePin');
+Route::post('hasPin', 'Api\PinController@hasPin')->name('hasPin');
+
+//email verification
+Route::post('addEmail', 'Api\EmailVerificationController@addEmail')->name('addEmail');
+Route::post('verifyEmail', 'Api\EmailVerificationController@verifyEmail')->name('verifyEmail');
+Route::post('hasVerifiedEmail', 'Api\EmailVerificationController@checkIfUserHasVerifiedEmail')->name('checkIfUserHasVerifiedEmail');
+
+
+
 });

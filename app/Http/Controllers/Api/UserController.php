@@ -150,76 +150,8 @@ class UserController extends Controller
 
     }
 
-    public function checkPin(Request $request) {
+    
 
-
-        $getPin = $request->all();
-
-        $pin = $getPin['data']['pin'];
-
-        $getUser = Pin::where('user_id', Auth::user()->id)->first();
-
-       
-
-        if (empty($getUser)) {
-            Pin::create([
-                'user_id' => Auth::user()->id,
-                'pin' => $pin,
-            ]);
-        }
-        else {
-            $locked_until = $getUser->login_until->diffForHumans(Carbon::now()->format('Y-m-d H:i:s'));
-
-            if ($getUser->pin != $pin) {
-                Pin::where('user_id', Auth::user()->id)->update(['attempts' => DB::raw('attempts+1')]);
-
-                if ($getUser->attempts >= 5) {
-
-                    //dont add minute if theres existing block 
-                    if ($getUser->login_until >= Carbon::now()->format('Y-m-d H:i:s'))
-                    {
-                        return response()->json([
-                            'message' => 'locked',
-                            'locked_until' => $locked_until,
-                            'verified' => false
-                        ]);
-                    }
-                    else
-                    {
-                        Pin::where('user_id', Auth::user()->id)->update(['login_until' => Carbon::now()->addMinutes(1)->format('Y-m-d H:i:s')]);
-                        return response()->json([
-                            'message' => 'locked_until',
-                            'verified' => false
-                        ]);
-                    }
-                }
-
-                return response()->json([
-                    'message' => 'wrong pin',
-                    'verified' => false
-                ]);
-                
-            }
-            else if($getUser->pin == $pin && $getUser->login_until >= Carbon::now()->format('Y-m-d H:i:s')) {
-      
-                return response()->json([
-                    'message' => 'locked',
-                    'locked_until' => $locked_until,
-                    'verified' => false
-                ]);
-            }
-            else {
-                Pin::where('user_id', Auth::user()->id)->update(['attempts' => 0]);
-
-                return response()->json([
-                    'message' => 'success',
-                    'verified' => true
-                ]);
-
-            }
-        }
-
-    }
 
         
 
