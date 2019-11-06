@@ -24,6 +24,7 @@ Route::post('validateLogin', 'Api\UserController@validateLogin')->name('validate
 
 
 
+
 Route::group(['middleware' => 'auth:api'], function(){
 //balance
 Route::post('addBalance', 'Api\UserController@addBalance')->name('addBalance');
@@ -38,6 +39,15 @@ Route::post('hasPin', 'Api\PinController@hasPin')->name('hasPin');
 Route::post('addEmail', 'Api\EmailVerificationController@addEmail')->name('addEmail');
 Route::post('verifyEmail', 'Api\EmailVerificationController@verifyEmail')->name('verifyEmail');
 Route::post('hasVerifiedEmail', 'Api\EmailVerificationController@checkIfUserHasVerifiedEmail')->name('checkIfUserHasVerifiedEmail');
+
+
+
+
+//fare
+Route::post('payFare', 'Api\FareMatrixController@payFare')->name('payFare');
+Route::post('getDestinations', 'Api\FareMatrixController@getDestination')->name('destination');
+Route::get('getOrigins', 'Api\FareMatrixController@getOrigin')->name('origin');
+Route::post('getFare', 'Api\FareMatrixController@getFare')->name('getFare');
 
 
 

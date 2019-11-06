@@ -55,7 +55,15 @@ class User extends Authenticatable
 
     {
 
-        return $this->hasOne('App\User', 'user_id', 'id');
+        return $this->hasOne('App\Pin', 'user_id', 'id');
+
+    }
+
+    public function paymentLogs()
+
+    {
+
+        return $this->hasOne('App\PaymentLogs', 'user_id', 'id');
 
     }
 
