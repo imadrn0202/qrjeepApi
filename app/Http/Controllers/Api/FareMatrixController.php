@@ -10,6 +10,7 @@ use App\Http\Resources\Origin as OriginResource;
 use App\Http\Resources\Fare as FareResource;
 use Illuminate\Support\Facades\Auth; 
 use App\User;
+use App\Driver;
 use App\PaymentLogs;
 
 class FareMatrixController extends Controller
@@ -65,8 +66,18 @@ class FareMatrixController extends Controller
         $data = $request->all();
 
         $quantity = $data['data']['qty'];
-        $driver_id = $data['data']['driver_id'];
+        $plate_number = $data['data']['driver_id'];
         $user_type = $data['data']['type'];
+
+
+        $checkDriverValid = Driver::where('plate_number', $plate_number)->first();
+
+        if (empty($checkDriverValid)) {
+            return response()->json([
+                'message' => 'Invalid Driver ID',
+                'success' => false
+            ]);
+        }
 
         $fare = FareMatrix::where('origin', $data['data']['origin'])->where('destination', $data['data']['destination'])->first();
 
@@ -93,20 +104,20 @@ class FareMatrixController extends Controller
         }
         else {
 
-            $getDriverBalance = User::where('mobile_number', $driver_id)->first();
+            $getDriverBalance = Driver::where('plate_number', $plate_number)->first();
            
             $updateUserBalance = User::where('id', Auth::user()->id)->update([
                 'balance' => $finalBalance
             ]);
 
-            $updateDriverBalance = User::where('mobile_number', $driver_id)->update([
+            $updateDriverBalance = Driver::where('id', $getDriverBalance->id)->update([
                 'balance' => $getDriverBalance->balance + $finalFare
             ]);
 
             PaymentLogs::create([
                 'user_id' => Auth::user()->id,
                 'fare_id' => $fare->id,
-                'driver_id' => $driver_id,
+                'driver_id' => $getDriverBalance->id,
                 'user_type' => $user_type,
                 'quantity' => $quantity,
                 'final_amount' => $finalFare

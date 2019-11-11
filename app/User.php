@@ -47,7 +47,7 @@ class User extends Authenticatable
 
     {
 
-        return $this->hasOne('App\Profile', 'user_id', 'id');
+        return $this->hasOne('App\TransactionLogs', 'user_id', 'id');
 
     }
 
@@ -72,6 +72,14 @@ class User extends Authenticatable
     {
 
         return $this->hasOne('App\EmailVerification', 'user_id', 'id');
+
+    }
+
+    public function driver()
+
+    {
+
+        return $this->hasOne('App\Driver', 'user_id', 'id');
 
     }
 

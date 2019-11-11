@@ -8,7 +8,7 @@ class FareMatrix extends Model
 {
     public function paymentLogs()
     {
-        return $this->hasOne('App\Profile', 'fare_id', 'id');
+        return $this->hasMany('App\PaymentLogs', 'fare_id', 'id');
     }
 
 }

@@ -3,83 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\PaymentLogs;
+use App\TransactionLogs;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller; 
+use Illuminate\Support\Facades\Auth; 
+use App\Http\Resources\PaymentLogs as PaymentLogsResource;
+use App\Http\Resources\TransactionLogs as TransactionLogsResource;
+use App\User;
 
 class PaymentLogsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    public function getUserPaymentLogs() {
+        $paymentLogs = PaymentLogs::with('fare')->where('user_id', Auth::user()->id)->get();
+
+        return PaymentLogsResource::collection($paymentLogs)->values()->all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function getUserTransactionLogs() {
+        $transactionLogs = TransactionLogs::where('scanned_mobile_number', Auth::user()->mobile_number)->get();
+
+        return TransactionLogsResource::collection($transactionLogs)->values()->all();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\PaymentLogs  $paymentLogs
-     * @return \Illuminate\Http\Response
-     */
-    public function show(PaymentLogs $paymentLogs)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\PaymentLogs  $paymentLogs
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PaymentLogs $paymentLogs)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\PaymentLogs  $paymentLogs
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, PaymentLogs $paymentLogs)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\PaymentLogs  $paymentLogs
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(PaymentLogs $paymentLogs)
-    {
-        //
-    }
 }

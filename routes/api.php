@@ -18,14 +18,24 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
+
 Route::post('checkMobileNumber', 'Api\UserController@checkMobileNumber')->name('checkMobileNumber');
 
 Route::post('validateLogin', 'Api\UserController@validateLogin')->name('validateLogin');
 
 
 
-
 Route::group(['middleware' => 'auth:api'], function(){
+
+//logs
+Route::get('getUserPaymentLogs', 'Api\PaymentLogsController@getUserPaymentLogs');
+Route::get('getUserTransactionLogs', 'Api\PaymentLogsController@getUserTransactionLogs');
+
+
+//drivers
+Route::get('getDriverList', 'Api\DriverController@getDriverList');
+Route::post('createDriver', 'Api\DriverController@createDriver');
+
 //balance
 Route::post('addBalance', 'Api\UserController@addBalance')->name('addBalance');
 Route::post('checkBalance', 'Api\UserController@checkBalance')->name('checkBalance');

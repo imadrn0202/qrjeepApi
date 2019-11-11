@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentLogsTable extends Migration
+class CreateDriversTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreatePaymentLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_logs', function (Blueprint $table) {
+        Schema::create('drivers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
-            $table->bigInteger('fare_id');
-            $table->bigInteger('driver_id');
-            $table->bigInteger('quantity');
-            $table->string('user_type');
-            $table->float('final_amount', 8, 2);
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('plate_number');
+            $table->float('balance', 8, 2)->default(0);
             $table->timestamps();
         });
     }
@@ -32,6 +31,7 @@ class CreatePaymentLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_logs');
+        
+
     }
 }
