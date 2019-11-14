@@ -9,9 +9,11 @@ use PayPal\Api\Details;
 use PayPal\Api\Item;
 /** All Paypal Details class **/
 use PayPal\Api\ItemList;
+use App\User;
 use PayPal\Api\Payer;
 use PayPal\Api\Payment;
 use PayPal\Api\PaymentExecution;
+use Illuminate\Support\Facades\Auth; 
 use PayPal\Api\RedirectUrls;
 use PayPal\Api\Transaction;
 use PayPal\Auth\OAuthTokenCredential;
@@ -20,9 +22,13 @@ use Redirect;
 use Session;
 use URL;
 use Request as Req;
+use App\PaymentInvoice;
+use App\TransactionLogs;
+
 class PaypalController extends Controller
 {
     private $_api_context;
+    private $payment_id;
     /**
      * Create a new controller instance.
      *
@@ -46,7 +52,8 @@ class PaypalController extends Controller
     {
 
         $data = $request->all();
-        
+        $user = User::where('mobile_number', $data['data']['mobile_number'])->first();
+
         $payer = new Payer();
         $payer->setPaymentMethod('paypal');
         $item_1 = new Item();
@@ -89,10 +96,17 @@ class PaypalController extends Controller
                 break;
             }
         }
-        /** add payment ID to session **/
-        Session::put('paypal_payment_id', $payment->getId());
+
         if (isset($redirect_url)) {
             /** redirect to paypal **/
+
+            PaymentInvoice::create([
+                'user_id' => $user->id,
+                'paypal_id' => $payment->getId(),
+                'amount' => $data['data']['amount'],
+                'status' => 'pending'
+            ]);
+
             return response()->json([
                 'url' => $redirect_url
             ]);
@@ -102,24 +116,48 @@ class PaypalController extends Controller
     }
     public function getPaymentStatus()
     {
-        /** Get the payment ID before session clear **/
-        $payment_id = Session::get('paypal_payment_id');
-        /** clear the session payment ID **/
-        Session::forget('paypal_payment_id');
-        if (empty(Req::get('PayerID')) || empty(Req::get('token'))) {
+
+        $getPaymentInvoice = PaymentInvoice::where('paypal_id', Req::get('paymentId'))->first();
+
+        if ($getPaymentInvoice->status == 'paid' && (empty(Req::get('PayerID')) || empty(Req::get('token')))) {
             \Session::put('error', 'Payment failed');
-            return Redirect::to('/');
+            return Redirect::to('/failed');
         }
-        $payment = Payment::get($payment_id, $this->_api_context);
+        $payment = Payment::get(Req::get('paymentId'), $this->_api_context);
         $execution = new PaymentExecution();
         $execution->setPayerId(Req::get('PayerID'));
         /**Execute the payment **/
         $result = $payment->execute($execution, $this->_api_context);
-        if ($result->getState() == 'approved') {
-            \Session::put('success', 'Payment success');
-            return Redirect::to('/');
+        if ($result->getState() == 'approved') {   
+
+            $getUserBalance = User::where('id', $getPaymentInvoice->user_id)->first();
+
+
+            $updatePaymentInvoice = PaymentInvoice::where('paypal_id', $getPaymentInvoice->paypal_id)->update([
+                'status' => 'paid'
+            ]);
+
+            if ($updatePaymentInvoice) {
+
+                TransactionLogs::create(
+                [
+                'user_id' => $getPaymentInvoice->user_id, 
+                'scanned_mobile_number' =>  $getUserBalance->mobile_number,
+                'amount' => $getPaymentInvoice->amount 
+                ]);
+
+                
+                User::where('id', $getPaymentInvoice->user_id)->update([
+                    'balance' => $getUserBalance->balance + $getPaymentInvoice->amount
+                ]);
+
+
+            }
+
+            
+
+            return Redirect::to('/success');
         }
-        \Session::put('error', 'Payment failed');
-        return Redirect::to('/');
+        return Redirect::to('/failed');
     }
 }

@@ -67,6 +67,14 @@ class User extends Authenticatable
 
     }
 
+    public function paymentInvoice()
+
+    {
+
+        return $this->hasOne('App\PaymentInvoice', 'user_id', 'id');
+
+    }
+
     public function email_verification()
 
     {

@@ -18,6 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
+Route::post('paypal', 'Api\PaypalController@payWithpaypal');
+
+
 
 Route::post('checkMobileNumber', 'Api\UserController@checkMobileNumber')->name('checkMobileNumber');
 

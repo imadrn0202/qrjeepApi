@@ -11,4 +11,13 @@
 |
 */
 
+Route::get('status', 'Api\PaypalController@getPaymentStatus');
 
+
+Route::get('/success', function () {
+    return view('success');
+});
+
+Route::get('/failed', function () {
+    return view('failed');
+});

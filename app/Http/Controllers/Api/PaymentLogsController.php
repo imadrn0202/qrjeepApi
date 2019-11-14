@@ -13,6 +13,13 @@ use App\User;
 
 class PaymentLogsController extends Controller
 {
+
+    public function getOperatorTotalEarnings() {
+        $paymentLogs = PaymentLogs::with('fare')->where('user_id', Auth::user()->id)->get();
+
+        return PaymentLogsResource::collection($paymentLogs)->values()->all();
+    }
+
     public function getUserPaymentLogs() {
         $paymentLogs = PaymentLogs::with('fare')->where('user_id', Auth::user()->id)->get();
 
