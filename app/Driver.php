@@ -19,7 +19,7 @@ class Driver extends Model
 
     public function paymentLogs()
     {
-        return $this->hasMany('App\PaymentLogs', 'driver_id', 'id');
+        return $this->hasMany('App\PaymentLogs', 'driver_id', 'driver_id');
     }
 
 }

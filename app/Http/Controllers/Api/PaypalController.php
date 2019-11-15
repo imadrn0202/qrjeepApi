@@ -119,9 +119,9 @@ class PaypalController extends Controller
 
         $getPaymentInvoice = PaymentInvoice::where('paypal_id', Req::get('paymentId'))->first();
 
-        if ($getPaymentInvoice->status == 'paid' && (empty(Req::get('PayerID')) || empty(Req::get('token')))) {
-            \Session::put('error', 'Payment failed');
+        if ($getPaymentInvoice->status == 'paid' || (empty(Req::get('PayerID')) || empty(Req::get('token')))) {
             return Redirect::to('/failed');
+            exit;
         }
         $payment = Payment::get(Req::get('paymentId'), $this->_api_context);
         $execution = new PaymentExecution();
@@ -129,6 +129,12 @@ class PaypalController extends Controller
         /**Execute the payment **/
         $result = $payment->execute($execution, $this->_api_context);
         if ($result->getState() == 'approved') {   
+
+
+            if ($getPaymentInvoice->status == 'paid') {
+                return Redirect::to('/failed');
+                exit;
+            }
 
             $getUserBalance = User::where('id', $getPaymentInvoice->user_id)->first();
 
@@ -157,7 +163,9 @@ class PaypalController extends Controller
             
 
             return Redirect::to('/success');
+            exit;
         }
         return Redirect::to('/failed');
+        exit;
     }
 }

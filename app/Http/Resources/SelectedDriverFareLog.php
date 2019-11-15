@@ -3,9 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Carbon\Carbon;
 
-class PaymentLogs extends JsonResource
+class SelectedDriverFareLog extends JsonResource
 {
     /**
      * Transform the resource into an array.

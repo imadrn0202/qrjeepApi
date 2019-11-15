@@ -18,10 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::post('paypal', 'Api\PaypalController@payWithpaypal');
-
-
-
 Route::post('checkMobileNumber', 'Api\UserController@checkMobileNumber')->name('checkMobileNumber');
 
 Route::post('validateLogin', 'Api\UserController@validateLogin')->name('validateLogin');
@@ -29,6 +25,17 @@ Route::post('validateLogin', 'Api\UserController@validateLogin')->name('validate
 
 
 Route::group(['middleware' => 'auth:api'], function(){
+
+
+//paypal
+Route::post('paypal', 'Api\PaypalController@payWithpaypal');
+
+//operator
+Route::get('getTotalEarnings', 'Api\PaymentLogsController@getTotalEarnings');
+Route::get('getOperatorTodayEarnings', 'Api\PaymentLogsController@getOperatorTodayEarnings');
+Route::post('getDriverTodayEarnings', 'Api\PaymentLogsController@getDriverTodayEarnings');
+
+Route::post('getSelectedDriverFareLog', 'Api\PaymentLogsController@getSelectedDriverFareLog');
 
 //logs
 Route::get('getUserPaymentLogs', 'Api\PaymentLogsController@getUserPaymentLogs');
