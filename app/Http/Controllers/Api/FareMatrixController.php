@@ -66,11 +66,11 @@ class FareMatrixController extends Controller
         $data = $request->all();
 
         $quantity = $data['data']['qty'];
-        $plate_number = $data['data']['driver_id'];
+        $driver_id = $data['data']['driver_id'];
         $user_type = $data['data']['type'];
 
 
-        $checkDriverValid = Driver::where('plate_number', $plate_number)->first();
+        $checkDriverValid = Driver::where('id', $driver_id)->first();
 
         if (empty($checkDriverValid)) {
             return response()->json([
@@ -104,7 +104,8 @@ class FareMatrixController extends Controller
         }
         else {
 
-            $getDriverBalance = Driver::where('plate_number', $plate_number)->first();
+
+            $getDriverBalance = Driver::where('id', $driver_id)->first();
            
             $updateUserBalance = User::where('id', Auth::user()->id)->update([
                 'balance' => $finalBalance

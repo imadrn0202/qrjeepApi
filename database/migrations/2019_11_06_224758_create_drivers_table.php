@@ -16,6 +16,7 @@ class CreateDriversTable extends Migration
         Schema::create('drivers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
+            $table->bigInteger('driver_user_id');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('plate_number');

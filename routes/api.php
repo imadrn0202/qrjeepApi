@@ -34,7 +34,6 @@ Route::post('paypal', 'Api\PaypalController@payWithpaypal');
 Route::get('getTotalEarnings', 'Api\PaymentLogsController@getTotalEarnings');
 Route::get('getOperatorTodayEarnings', 'Api\PaymentLogsController@getOperatorTodayEarnings');
 Route::post('getDriverTodayEarnings', 'Api\PaymentLogsController@getDriverTodayEarnings');
-
 Route::post('getSelectedDriverFareLog', 'Api\PaymentLogsController@getSelectedDriverFareLog');
 
 //logs
@@ -42,9 +41,12 @@ Route::get('getUserPaymentLogs', 'Api\PaymentLogsController@getUserPaymentLogs')
 Route::get('getUserTransactionLogs', 'Api\PaymentLogsController@getUserTransactionLogs');
 
 
+
 //drivers
 Route::get('getDriverList', 'Api\DriverController@getDriverList');
 Route::post('createDriver', 'Api\DriverController@createDriver');
+Route::get('getDriverEarnings', 'Api\DriverController@getDriverEarnings');
+Route::get('getDriverFareLog', 'Api\DriverController@getDriverFareLog');
 
 //balance
 Route::post('addBalance', 'Api\UserController@addBalance')->name('addBalance');

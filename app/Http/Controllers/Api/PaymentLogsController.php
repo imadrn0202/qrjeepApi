@@ -40,7 +40,7 @@ class PaymentLogsController extends Controller
 
 
         return response()->json([
-            'operator_today_earnings' => $operatorTodayEarnings
+            'operator_today_earnings' => $operatorTodayEarnings * 0.65
         ]);
     }
 
@@ -54,7 +54,7 @@ class PaymentLogsController extends Controller
         
 
         return response()->json([
-            'driver_today_earnings' => $driverTodayEarnings
+            'driver_today_earnings' => $driverTodayEarnings * 0.35
         ]);
 
     }
@@ -62,7 +62,9 @@ class PaymentLogsController extends Controller
     public function getSelectedDriverFareLog(Request $request) {
         $data = $request->all();
 
-        $selectedDriverFareLog = PaymentLogs::with('fare')->where('driver_id', $data['data']['driver_id'])
+        $getDriverId = Driver::where('driver_user_id', Auth::user()->id)->first();
+
+        $selectedDriverFareLog = PaymentLogs::with('fare')->where('driver_id', $getDriverId->driver_user_id)
                                 ->orderBy('created_at', 'desc')
                                 ->get();
         
