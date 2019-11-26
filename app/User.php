@@ -87,8 +87,10 @@ class User extends Authenticatable
 
     {
 
-        return $this->hasOne('App\Driver', 'user_id', 'id');
+        return $this->hasOne('App\Driver', 'driver_user_id', 'id');
 
     }
+
+ 
 
 }

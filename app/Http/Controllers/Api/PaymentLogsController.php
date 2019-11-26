@@ -62,12 +62,9 @@ class PaymentLogsController extends Controller
     public function getSelectedDriverFareLog(Request $request) {
         $data = $request->all();
 
-        $getDriverId = Driver::where('driver_user_id', Auth::user()->id)->first();
-
-        $selectedDriverFareLog = PaymentLogs::with('fare')->where('driver_id', $getDriverId->driver_user_id)
+        $selectedDriverFareLog = PaymentLogs::with('fare')->where('driver_id', $data['data']['driver_id'])
                                 ->orderBy('created_at', 'desc')
                                 ->get();
-        
 
         return SelectedDriverFareLogResource::collection($selectedDriverFareLog)->values()->all();
 

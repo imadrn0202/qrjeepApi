@@ -24,7 +24,11 @@ class SelectedDriverFareLog extends JsonResource
             'quantity' => $this->quantity,
             'discounted_amount' => $discounted,
             'final_amount' => $this->final_amount,
-            'created_at' => $this->created_at->format('Y-m-d H:i')
+            'created_at' => $this->created_at->format('Y-m-d H:i'),
+            'first_name' => $this->driver->first_name,
+            'last_name' => $this->driver->last_name,
+            'earnings' => $this->earnings,
+            'driver_user_id' => $this->driver_user_id
         ];
     }
 }

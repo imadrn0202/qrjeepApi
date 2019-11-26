@@ -29,7 +29,7 @@ class PaymentLogs extends Model
     public function driver()
 
     {
-        return $this->belongsTo('App\Driver');
+        return $this->belongsTo('App\Driver', 'driver_id', 'driver_user_id');
 
     }
 

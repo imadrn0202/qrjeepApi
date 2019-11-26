@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Driver;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\DailyReportResource;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -11,13 +12,69 @@ use App\Http\Resources\Driver as DriverResource;
 use App\Http\Resources\SelectedDriverFareLog;
 use App\PaymentLogs;
 use Carbon\Carbon;
+use DB;
 
 class DriverController extends Controller
 {
 
+    public function deleteDriver(Request $request) {
+        $data = $request->all();
+
+        $deleteDriver = Driver::where('driver_user_id', $data['driver_id'])->delete();
+
+        if (!$deleteDriver) {
+            return response()->json([
+                'success' => false
+            ]);
+        }
+        return response()->json([
+            'success' => true
+        ]);
+        
+
+    }
+
+    public function getDriverByDriverUserId(Request $request) {
+
+        $data = $request->all();
+        
+        $driver = Driver::with('user')->where('driver_user_id', $data['data']['driver_user_id'])->first();
+
+        return response()->json($driver);
+
+    }
+
+    public function updateDriver(Request $request) {
+        $data = $request->except('mobile_number');
+
+        $mobile = $request->only('mobile_number');
+
+
+
+
+        $updateDriver = Driver::where('driver_user_id', $data['driver_user_id'])
+        ->update($data);
+
+        User::where('id', $data['driver_id'])
+        ->update([
+            'mobile_number' => $mobile['mobile_number'],
+        ]);
+
+        if (!$updateDriver) {
+            return response()->json([
+                'success' => false
+            ]);
+        }
+        return response()->json([
+            'success' => true
+        ]);
+
+    }
+
+
     public function getDriverList()
     {
-        $drivers = Driver::where('user_id', Auth::user()->id)->get();
+        $drivers = Driver::with('user')->where('user_id', Auth::user()->id)->get();
 
         return DriverResource::collection($drivers)->values()->all();
     }
@@ -100,11 +157,31 @@ class DriverController extends Controller
         }
 
 
-        $selectedDriverFareLog = PaymentLogs::with('fare')->where('driver_id', $getDriverId->id)
+        $selectedDriverFareLog = PaymentLogs::with('fare', 'driver')->where('driver_id', $getDriverId->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
 
         return SelectedDriverFareLog::collection($selectedDriverFareLog)->values()->all();
+    }
+
+    public function getDailyReport()
+    {
+        $selectedDriverFareLog = PaymentLogs::with('fare', 'driver')
+        ->select('payment_logs.*', DB::raw('drivers.driver_user_id AS driver_user_id'), DB::raw('SUM(final_amount) AS earnings'))
+        ->join('drivers', 'payment_logs.driver_id', '=', 'drivers.driver_user_id')
+        ->where('drivers.user_id', Auth::user()->id)
+        ->groupBy('payment_logs.driver_id', 'created_at')
+        ->orderBy('payment_logs.created_at', 'desc')
+        ->get();
+
+
+
+        return SelectedDriverFareLog::collection($selectedDriverFareLog)->values()->all();
+
+
+        // $getDriverId = Driver::with('paymentLogs')->join('payment_logs', 'drivers.driver_user_id', '=', 'payment_logs.driver_id')->where('drivers.user_id', Auth::user()->id)->get();
+        
+        // return DailyReportResource::collection($getDriverId)->values()->all();
     }
 }

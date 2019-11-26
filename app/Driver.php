@@ -13,13 +13,14 @@ class Driver extends Model
     public function user()
 
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User', 'driver_user_id');
 
     }
 
     public function paymentLogs()
     {
-        return $this->hasMany('App\PaymentLogs', 'driver_id', 'driver_id');
+        return $this->hasMany('App\PaymentLogs', 'driver_id', 'driver_user_id');
     }
+
 
 }

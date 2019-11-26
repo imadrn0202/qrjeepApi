@@ -35,6 +35,13 @@ Route::get('getTotalEarnings', 'Api\PaymentLogsController@getTotalEarnings');
 Route::get('getOperatorTodayEarnings', 'Api\PaymentLogsController@getOperatorTodayEarnings');
 Route::post('getDriverTodayEarnings', 'Api\PaymentLogsController@getDriverTodayEarnings');
 Route::post('getSelectedDriverFareLog', 'Api\PaymentLogsController@getSelectedDriverFareLog');
+Route::get('getDailyReport', 'Api\DriverController@getDailyReport');
+Route::delete('deleteDriver', 'Api\DriverController@deleteDriver');
+Route::delete('updateDriver', 'Api\DriverController@updateDriver');
+
+Route::post('getDriverByDriverUserId', 'Api\DriverController@getDriverByDriverUserId');
+
+
 
 //logs
 Route::get('getUserPaymentLogs', 'Api\PaymentLogsController@getUserPaymentLogs');

@@ -70,7 +70,7 @@ class FareMatrixController extends Controller
         $user_type = $data['data']['type'];
 
 
-        $checkDriverValid = Driver::where('id', $driver_id)->first();
+        $checkDriverValid = Driver::where('driver_user_id', $driver_id)->first();
 
         if (empty($checkDriverValid)) {
             return response()->json([
@@ -105,20 +105,20 @@ class FareMatrixController extends Controller
         else {
 
 
-            $getDriverBalance = Driver::where('id', $driver_id)->first();
+            $getDriverBalance = Driver::where('driver_user_id', $driver_id)->first();
            
             $updateUserBalance = User::where('id', Auth::user()->id)->update([
                 'balance' => $finalBalance
             ]);
 
-            $updateDriverBalance = Driver::where('id', $getDriverBalance->id)->update([
+            $updateDriverBalance = Driver::where('driver_user_id', $getDriverBalance->id)->update([
                 'balance' => $getDriverBalance->balance + $finalFare
             ]);
 
             PaymentLogs::create([
                 'user_id' => Auth::user()->id,
                 'fare_id' => $fare->id,
-                'driver_id' => $getDriverBalance->id,
+                'driver_id' => $getDriverBalance->driver_user_id,
                 'user_type' => $user_type,
                 'quantity' => $quantity,
                 'final_amount' => $finalFare
