@@ -9,6 +9,7 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Resources\Driver as DriverResource;
+use App\Http\Resources\GetDriverFareLogResource;
 use App\Http\Resources\SelectedDriverFareLog;
 use App\PaymentLogs;
 use Carbon\Carbon;
@@ -21,6 +22,10 @@ class DriverController extends Controller
         $data = $request->all();
 
         $deleteDriver = Driver::where('driver_user_id', $data['driver_id'])->delete();
+
+        PaymentLogs::where('driver_id', $data['driver_id'])->delete();
+
+        User::where('id', $data['driver_id'])->delete();
 
         if (!$deleteDriver) {
             return response()->json([
@@ -156,13 +161,12 @@ class DriverController extends Controller
             ]);
         }
 
-
-        $selectedDriverFareLog = PaymentLogs::with('fare', 'driver')->where('driver_id', $getDriverId->id)
+        $selectedDriverFareLog = PaymentLogs::with('fare', 'driver')->where('driver_id', $getDriverId->driver_user_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
 
-        return SelectedDriverFareLog::collection($selectedDriverFareLog)->values()->all();
+        return GetDriverFareLogResource::collection($selectedDriverFareLog)->values()->all();
     }
 
     public function getDailyReport()
@@ -171,7 +175,7 @@ class DriverController extends Controller
         ->select('payment_logs.*', DB::raw('drivers.driver_user_id AS driver_user_id'), DB::raw('SUM(final_amount) AS earnings'))
         ->join('drivers', 'payment_logs.driver_id', '=', 'drivers.driver_user_id')
         ->where('drivers.user_id', Auth::user()->id)
-        ->groupBy('payment_logs.driver_id', 'created_at')
+        ->groupBy('payment_logs.driver_id', 'payment_logs.created_at')
         ->orderBy('payment_logs.created_at', 'desc')
         ->get();
 

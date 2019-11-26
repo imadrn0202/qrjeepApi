@@ -34,7 +34,7 @@ class UserController extends Controller
 
         //$smscode = mt_rand(100000, 999999);
 
-        $smscode = 000000;
+        $smscode = 123456;
 
 
         if ($checkUser->isEmpty()) {
