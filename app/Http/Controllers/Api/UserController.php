@@ -32,9 +32,9 @@ class UserController extends Controller
 
         $checkUser = User::where('mobile_number', $mobileNumber['mobile_number']['mobile_number'])->get();
 
-        //$smscode = mt_rand(100000, 999999);
+        $smscode = mt_rand(100000, 999999);
 
-        $smscode = 123456;
+        //$smscode = 123456;
 
 
         if ($checkUser->isEmpty()) {
@@ -67,11 +67,11 @@ class UserController extends Controller
 
         $strMobileNumber = implode("",$mobileNumber['mobile_number']);
 
-   /*     Nexmo::message()->send([
+        Nexmo::message()->send([
             'to'   => $strMobileNumber,
             'from' => 'NXSMS',
             'text' => 'Verification Code: '.$smscode.' '
-        ]); */
+        ]);
         
 
         return response()->json([
